@@ -2,9 +2,8 @@
   "name": "hotel-3d-booking",
   "version": "1.0.0",
   "description": "Website đặt phòng khách sạn 5 sao với mô hình khám phá phòng 3D tương tác Three.js",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node dev-server.js"
   },
   "author": "",
   "license": "ISC"
