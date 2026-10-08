@@ -223,21 +223,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (guidanceActionBtn) guidanceActionBtn.style.display = 'none';
 
     } else if (state === 'door_opened') {
-      // Cửa đã mở
-      if (modalRoomStatusText) modalRoomStatusText.textContent = 'Cửa đã mở - Sẵn sàng bước vào';
+      // Cửa đã mở - Đang tự động bước vào trong
+      if (modalRoomStatusText) modalRoomStatusText.textContent = 'Cửa đã mở - Đang tự động bước vào trong...';
       if (modalStatusDot) {
         modalStatusDot.style.background = '#10b981';
         modalStatusDot.style.boxShadow = '0 0 10px #10b981';
       }
 
-      guidanceBanner.classList.add('interactive');
-      if (guidanceText) guidanceText.innerHTML = `<span>🚪</span> Cửa phòng đã mở! Nhấp vào để bước vào trong:`;
-      if (guidanceActionBtn) {
-        guidanceActionBtn.style.display = 'inline-block';
-        guidanceActionBtn.onclick = () => {
-          if (roomViewer) roomViewer.walkIntoRoom();
-        };
-      }
+      if (guidanceText) guidanceText.innerHTML = `<span>🚪</span> Cửa phòng đã mở! Đang tự động bước vào bên trong...`;
+      if (guidanceActionBtn) guidanceActionBtn.style.display = 'none';
 
     } else if (state === 'inside') {
       // Đã bước vào trong phòng

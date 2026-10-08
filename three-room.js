@@ -820,11 +820,10 @@ class Room3DViewer {
     }
   }
 
-  // 1. Mở cửa phòng (Door swing)
+  // 1. Mở cửa phòng (Door swing) & Tự động bước vào phòng
   openDoor(onComplete) {
     if (this.isDoorOpen || !this.doorPivot) return;
     this.isDoorOpen = true;
-    this.state = 'door_opened';
 
     // Âm thanh quẹt thẻ & đèn xanh sáng
     this.playKeycardBeep();
@@ -832,25 +831,33 @@ class Room3DViewer {
       this.ledLockMesh.material.color.setHex(0x00ff88);
     }
 
+    if (typeof this.options.onStateChange === 'function') {
+      this.options.onStateChange('opening');
+    }
+
     setTimeout(() => {
       this.playDoorSound();
 
       gsap.to(this.doorPivot.rotation, {
         y: -Math.PI * 0.58,
-        duration: 1.4,
+        duration: 1.25,
         ease: 'power2.out',
         onComplete: () => {
+          this.state = 'door_opened';
           if (typeof this.options.onStateChange === 'function') {
             this.options.onStateChange(this.state);
           }
-          if (typeof onComplete === 'function') onComplete();
+          if (typeof onComplete === 'function') {
+            onComplete();
+          } else {
+            // Tự động bước vào trong phòng ngay khi cánh cửa mở ra xong, không cần bấm thêm!
+            setTimeout(() => {
+              this.walkIntoRoom();
+            }, 80);
+          }
         }
       });
     }, 200);
-
-    if (typeof this.options.onStateChange === 'function') {
-      this.options.onStateChange('opening');
-    }
   }
 
   // 2. Bước vào trong không gian ảnh thật 360°
