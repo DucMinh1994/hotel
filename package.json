@@ -1,10 +1,6 @@
 {
   "name": "hotel-3d-booking",
   "version": "1.0.0",
-  "description": "Website đặt phòng khách sạn 5 sao với mô hình khám phá phòng 3D tương tác Three.js",
-  "scripts": {
-    "start": "node dev-server.js"
-  },
-  "author": "",
-  "license": "ISC"
+  "description": "Lumiere Grand Hotel 3D Virtual Tour",
+  "private": true
 }
