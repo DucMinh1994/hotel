@@ -913,14 +913,14 @@ class Room3DViewer {
       return;
     }
 
-    // Nếu nhấp vào cửa chuyển sang phòng tắm
+    // Nếu nhấp vào cửa chuyển sang không gian con (phòng tắm hoặc ban công)
     if (item.isPortal && item.targetRoom) {
       this.enterSubRoom(item.targetRoom);
       return;
     }
 
     // Nếu nhấp vào cửa quay lại phòng ngủ
-    if (item.isBackPortal || item.id === 'back_to_bedroom') {
+    if (item.isBackPortal || item.id === 'back_to_bedroom' || item.id === 'back_to_bedroom_from_balcony') {
       this.exitSubRoom();
       return;
     }
@@ -1002,14 +1002,18 @@ class Room3DViewer {
       this.options.onBeforeSceneTransition(subRoomKey);
     }
 
-    // Camera di chuyển nhẹ hướng về cửa phòng tắm trước khi mở
-    const itemBath = this.roomData.items.find(i => i.id === 'bath');
-    if (itemBath) {
-      const bathDir = new THREE.Vector3(itemBath.position.x, itemBath.position.y, itemBath.position.z).normalize();
+    // Camera di chuyển nhẹ hướng về cửa phòng (phòng tắm hoặc ban công) trước khi mở
+    const portalItem = this.roomData.items?.find(i => 
+      (i.isPortal && i.targetRoom === subRoomKey) || 
+      (subRoomKey === 'bathroom' && i.id === 'bath') || 
+      (subRoomKey === 'balcony' && i.id === 'window')
+    );
+    if (portalItem && portalItem.position) {
+      const pDir = new THREE.Vector3(portalItem.position.x, portalItem.position.y, portalItem.position.z).normalize();
       gsap.to(this.controls.target, {
-        x: bathDir.x * 10,
-        y: bathDir.y * 10,
-        z: bathDir.z * 10,
+        x: pDir.x * 10,
+        y: pDir.y * 10,
+        z: pDir.z * 10,
         duration: 0.35,
         ease: 'power2.out'
       });

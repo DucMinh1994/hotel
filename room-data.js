@@ -290,35 +290,33 @@ const ROOMS_DATA = {
       },
       {
         "id": "window",
-        "name": "Cửa Sổ Kính Lớn & Rèm Voan 2 Lớp",
-        "category": "Kiến Trúc & Tầm Nhìn",
-        "icon": "🪟",
-        "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+        "name": "Cửa Trượt Kính Ban Công Panorama View Biển",
+        "category": "Ban Công & Tầm Nhìn",
+        "icon": "🌊",
+        "isPortal": true,
+        "targetRoom": "balcony",
+        "image": "balcony_preview.jpg",
         "position": {
           "x": -2.07,
           "y": 0.22,
           "z": -2.16
         },
-        "description": "Khung cửa sổ kính đôi kịch trần đón trọn ánh sáng tự nhiên ấm áp, trang bị rèm voan trắng mềm mại tạo sự riêng tư cùng rèm cản sáng dày dặn giúp giấc ngủ trọn vẹn bất kỳ lúc nào.",
+        "description": "Cửa trượt kính cường lực kịch trần mở lối bước ra ban công riêng view biển. Nơi bạn đứng ngắm trọn vẹn vịnh biển xanh ngắt bao la và đại lộ sầm uất phía dưới chân tòa nhà.",
         "specs": [
           {
-            "key": "Cửa sổ",
-            "val": "Cửa sổ kính hộp cách âm cách nhiệt 2 lớp an toàn"
+            "key": "Cửa ban công",
+            "val": "Cửa kính hộp Low-E 3 lớp trượt êm ái cách âm tuyệt đối"
           },
           {
-            "key": "Rèm voan",
-            "val": "Rèm voan lụa trắng khuếch tán ánh sáng tự nhiên dịu mắt"
+            "key": "Tầm nhìn ban công",
+            "val": "Trực diện biển xanh bao la & Đại lộ ven biển phía dưới"
           },
           {
-            "key": "Rèm cản sáng",
-            "val": "Rèm vải dày dệt sợi blackout cản sáng 100%"
-          },
-          {
-            "key": "Ánh sáng viền",
-            "val": "Khe hắt đèn LED vàng ấm chạy dọc hộp rèm trên trần"
+            "key": "Trải nghiệm 3D",
+            "val": "Nhấp vào để mở cửa trượt kính bước ra ban công ngắm cảnh!"
           }
         ],
-        "shortName": "Cửa Sổ"
+        "shortName": "Ban Công View Biển"
       },
       {
         "id": "door",
@@ -545,6 +543,160 @@ const ROOMS_DATA = {
               {
                 "key": "Thao tác",
                 "val": "Nhấp vào để mở cửa bước ra ngoài phòng ngủ"
+              }
+            ]
+          }
+        ]
+      },
+      "balcony": {
+        "id": "balcony",
+        "name": "Ban Công Panorama View Biển",
+        "panorama360Url": "balcony_preview.jpg",
+        "panorama360FallbackUrl": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/fish_hoek_beach.jpg",
+        "initialTarget": {
+          "x": 0.2,
+          "y": 0.15,
+          "z": -2.95
+        },
+        "items": [
+          {
+            "id": "sea_view",
+            "name": "Tầm Nhìn Vịnh Biển Vô Cực",
+            "shortName": "View Biển Xanh",
+            "category": "Cảnh Quan Ngoại Cảnh",
+            "icon": "🌊",
+            "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+            "position": {
+              "x": 0.2,
+              "y": 0.15,
+              "z": -2.95
+            },
+            "description": "Tầm nhìn không giới hạn hướng ra vịnh biển xanh ngọc bích, bờ cát trắng trải dài và những con sóng êm đềm. Nơi đón ánh bình minh và chiêm ngưỡng hoàng hôn rực rỡ nhất đảo ngọc.",
+            "specs": [
+              {
+                "key": "Hướng nhìn",
+                "val": "Chính diện biển (Direct Ocean View)"
+              },
+              {
+                "key": "Khung cảnh",
+                "val": "Bờ biển trong xanh, đường chân trời vô cực"
+              },
+              {
+                "key": "Không khí",
+                "val": "Gió biển tự nhiên trong lành thoáng đãng"
+              }
+            ]
+          },
+          {
+            "id": "street_view",
+            "name": "Đại Lộ Ven Biển & Tuyến Phố Đi Bộ",
+            "shortName": "Đường Phố Phía Dưới",
+            "category": "Cảnh Quan Ngoại Cảnh",
+            "icon": "🛣️",
+            "image": "https://images.unsplash.com/photo-1477959858617-67f30bc75b82?auto=format&fit=crop&w=1200&q=80",
+            "position": {
+              "x": 1.7,
+              "y": -1.7,
+              "z": -1.7
+            },
+            "description": "Góc nhìn từ ban công nhìn thẳng xuống đại lộ ven biển rợp bóng dừa, làn đường xe chạy êm đềm và vỉa hè lát đá hoa cương dành cho du khách tản bộ ngắm cảnh ven bờ vịnh.",
+            "specs": [
+              {
+                "key": "Góc nhìn",
+                "val": "Từ ban công tầng cao nhìn xuống đại lộ dưới chân tòa nhà"
+              },
+              {
+                "key": "Hạ tầng",
+                "val": "Đường ven biển 4 làn xe, vỉa hè lát đá và hàng dừa mát rượi"
+              },
+              {
+                "key": "Ánh sáng đêm",
+                "val": "Hệ thống đèn đường LED vàng ấm cúng lung linh về đêm"
+              }
+            ]
+          },
+          {
+            "id": "balcony_table",
+            "name": "Bàn Trà & Ghế Mây Thư Giãn Ngoài Trời",
+            "shortName": "Bàn Ghế Ban Công",
+            "category": "Tiện Nghi Ban Công",
+            "icon": "☕",
+            "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&q=80",
+            "position": {
+              "x": -2.2,
+              "y": -1.5,
+              "z": -0.9
+            },
+            "description": "Bộ bàn trà tròn mặt kính cường lực kèm 2 ghế tựa mây nhựa đan thủ công kháng tia UV và chống chịu thời tiết biển. Thích hợp cho việc thưởng thức ly cà phê sáng hoặc ly rượu vang lúc hoàng hôn.",
+            "specs": [
+              {
+                "key": "Chất liệu",
+                "val": "Mây nhựa cao cấp kháng nước biển & Khung hợp kim nhôm sơn tĩnh điện"
+              },
+              {
+                "key": "Nệm ngồi",
+                "val": "Nệm chống thấm nước chuyên dụng ngoài trời Sunbrella"
+              },
+              {
+                "key": "Tiện ích",
+                "val": "Set trà chiều hoặc bữa sáng ngắm biển phục vụ tận phòng"
+              }
+            ]
+          },
+          {
+            "id": "glass_railing",
+            "name": "Lan Can Kính Cường Lực Không Viền",
+            "shortName": "Lan Can Kính 1.2m",
+            "category": "An Toàn & Kiến Trúc",
+            "icon": "🛡️",
+            "image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+            "position": {
+              "x": -0.2,
+              "y": -1.2,
+              "z": -2.7
+            },
+            "description": "Hệ lan can kính cường lực an toàn dày 15mm cao 1.2m với tay vịn inox 316 chống ăn mòn muối biển, thiết kế không viền giúp tối ưu trọn vẹn 100% tầm nhìn ra biển và đường phố bên dưới.",
+            "specs": [
+              {
+                "key": "Chiều cao lan can",
+                "val": "1.2m đạt tiêu chuẩn an toàn nghỉ dưỡng 5 sao quốc tế"
+              },
+              {
+                "key": "Kính",
+                "val": "Kính cường lực an toàn 2 lớp dán phim PVB chống nứt vỡ"
+              },
+              {
+                "key": "Tay vịn",
+                "val": "Thép không gỉ Inox 316 mạ satin sang trọng"
+              }
+            ]
+          },
+          {
+            "id": "back_to_bedroom_from_balcony",
+            "name": "Cửa Trượt Quay Lại Phòng Ngủ Suite 301",
+            "shortName": "Vào Lại Phòng Ngủ",
+            "category": "Điều Hướng Không Gian",
+            "icon": "🚪",
+            "isBackPortal": true,
+            "image": "hotel_room_preview.jpg",
+            "position": {
+              "x": 0.1,
+              "y": 0.0,
+              "z": 2.95
+            },
+            "description": "Cửa kính trượt cách âm 3 lớp dẫn ngược trở lại không gian phòng ngủ Deluxe Grand Ocean Suite ấm cúng với máy lạnh và giường King-size.",
+            "specs": [
+              {
+                "key": "Điểm đến",
+                "val": "Phòng ngủ Master Suite 301"
+              },
+              {
+                "key": "Cửa kính",
+                "val": "Kính hộp cách âm cách nhiệt Low-E 3 lớp"
+              },
+              {
+                "key": "Thao tác",
+                "val": "Nhấp vào để bước vào lại phòng ngủ"
               }
             ]
           }

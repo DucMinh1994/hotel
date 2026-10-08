@@ -105,7 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const overlayText = document.getElementById('scene-transition-text');
         const overlaySub = document.getElementById('scene-transition-sub');
         if (overlay) {
-          if (targetSubRoom === 'bathroom' || (!targetSubRoom && !roomViewer?.currentSubRoom)) {
+          if (targetSubRoom === 'balcony') {
+            if (overlayText) overlayText.innerHTML = '<span>🌊</span> Đang mở cửa kính bước ra ban công...';
+            if (overlaySub) overlaySub.textContent = 'Ban Công Riêng Panorama - Tầm Nhìn Biển Xanh & Đại Lộ Phía Dưới';
+          } else if (targetSubRoom === 'bathroom' || (!targetSubRoom && !roomViewer?.currentSubRoom)) {
             if (overlayText) overlayText.innerHTML = '<span>🛁</span> Đang mở cửa bước vào phòng tắm...';
             if (overlaySub) overlaySub.textContent = 'Phòng Tắm Master En-Suite Đá Cẩm Thạch 5 Sao';
           } else {
@@ -147,6 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (normalized >= 85 && normalized < 140) dirText = 'Hướng Cabin Tắm Kính & Sen Cây';
             else if (normalized >= 140 && normalized < 210) dirText = 'Hướng Bàn Lavabo & Tiện Nghi';
             else if (normalized >= 210 && normalized < 320) dirText = 'Hướng Bồn Tắm Nằm Thư Giãn';
+          } else if (roomViewer && roomViewer.currentSubRoom === 'balcony') {
+            if (normalized >= 315 || normalized < 45) dirText = 'Hướng Vịnh Biển Vô Cực';
+            else if (normalized >= 45 && normalized < 115) dirText = 'Hướng Đại Lộ & Phố Phía Dưới';
+            else if (normalized >= 115 && normalized < 210) dirText = 'Hướng Cửa Vào Lại Phòng';
+            else if (normalized >= 210 && normalized < 280) dirText = 'Hướng Bàn Ghế Ban Công';
+            else if (normalized >= 280 && normalized < 315) dirText = 'Hướng Lan Can Kính Ban Công';
           } else if (activeRoomId === '301') {
             if (normalized >= 345 || normalized < 35) dirText = 'Hướng Giường Ngủ King-Size';
             else if (normalized >= 35 && normalized < 65) dirText = 'Hướng Tab Đầu Giường';
@@ -156,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (normalized >= 195 && normalized < 215) dirText = 'Hướng Smart TV 65"';
             else if (normalized >= 215 && normalized < 245) dirText = 'Hướng Quầy Mini Bar';
             else if (normalized >= 245 && normalized < 285) dirText = 'Hướng Ghế Bành Thư Giãn';
-            else if (normalized >= 285 && normalized < 345) dirText = 'Hướng Cửa Sổ Tràn Sáng';
+            else if (normalized >= 285 && normalized < 345) dirText = 'Hướng Cửa Kính Ban Công View Biển';
           } else {
             if (normalized >= 340 || normalized < 35) dirText = 'Hướng Sofa Lounge & Bàn Trà';
             else if (normalized >= 35 && normalized < 100) dirText = 'Hướng Đèn Chùm Hoàng Gia';
@@ -316,6 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!bottomDock) return;
     bottomDock.innerHTML = '';
 
+    const isBalcony = subRoom.id === 'balcony';
+
     // Nút quay lại phòng ngủ chính (Portal Button)
     const backBtn = document.createElement('button');
     backBtn.className = 'dock-btn portal-btn';
@@ -324,15 +335,16 @@ document.addEventListener('DOMContentLoaded', () => {
     backBtn.onclick = () => { if (roomViewer) roomViewer.exitSubRoom(); };
     bottomDock.appendChild(backBtn);
 
-    // Nút góc nhìn toàn cảnh phòng tắm
+    // Nút góc nhìn toàn cảnh phòng tắm / ban công
     const overviewBtn = document.createElement('button');
     overviewBtn.className = 'dock-btn active';
     overviewBtn.setAttribute('data-action', 'overview');
-    overviewBtn.innerHTML = '<span>👁️ Toàn Cảnh Tắm</span>';
+    const overviewTitle = isBalcony ? '🌊 Toàn Cảnh Ban Công' : '👁️ Toàn Cảnh Tắm';
+    overviewBtn.innerHTML = `<span>${overviewTitle}</span>`;
     overviewBtn.onclick = () => { if (roomViewer) roomViewer.resetToOverview(); };
     bottomDock.appendChild(overviewBtn);
 
-    // Các thiết bị trong phòng tắm
+    // Các thiết bị / điểm cảnh quan trong subRoom
     subRoom.items.forEach(item => {
       if (item.isBackPortal) return; // Nút về phòng ngủ đã ở đầu dock
       const btn = document.createElement('button');
@@ -348,16 +360,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleSubRoomChange(subRoom) {
     if (subRoom) {
-      // Đang ở bên trong phòng tắm
+      const isBalcony = subRoom.id === 'balcony';
+
+      // Cập nhật tiêu đề & trạng thái
       if (modalRoomTitle) {
         modalRoomTitle.textContent = `${subRoom.name} - Suite 301`;
       }
       if (modalRoomStatusText) {
-        modalRoomStatusText.textContent = 'Bên trong phòng tắm En-suite riêng biệt';
+        modalRoomStatusText.textContent = isBalcony
+          ? 'Đang đứng tại ban công riêng - Trực diện view biển & đường phố'
+          : 'Bên trong phòng tắm En-suite riêng biệt';
       }
       if (modalStatusDot) {
-        modalStatusDot.style.background = '#38bdf8';
-        modalStatusDot.style.boxShadow = '0 0 10px #38bdf8';
+        modalStatusDot.style.background = isBalcony ? '#06b6d4' : '#38bdf8';
+        modalStatusDot.style.boxShadow = isBalcony ? '0 0 10px #06b6d4' : '0 0 10px #38bdf8';
       }
 
       // Guidance Banner
@@ -366,7 +382,9 @@ document.addEventListener('DOMContentLoaded', () => {
         guidanceBanner.classList.add('interactive');
       }
       if (guidanceText) {
-        guidanceText.innerHTML = '<span>🛁</span> <strong>Phòng Tắm 5 Sao:</strong> Bấm vào các điểm tròn hoặc xoay 360° để kiểm tra thiết bị';
+        guidanceText.innerHTML = isBalcony
+          ? '<span>🌊</span> <strong>Ban Công View Biển:</strong> Ngắm toàn cảnh vịnh biển xanh vô cực và phố đi bộ phía dưới'
+          : '<span>🛁</span> <strong>Phòng Tắm 5 Sao:</strong> Bấm vào các điểm tròn hoặc xoay 360° để kiểm tra thiết bị';
       }
       if (guidanceActionBtn) {
         guidanceActionBtn.style.display = 'inline-block';
@@ -379,10 +397,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Đóng drawer nếu đang mở
       if (inspectionDrawer) inspectionDrawer.classList.remove('open');
 
-      // Tạo các nút Hotspots HTML trong phòng tắm
+      // Tạo các nút Hotspots HTML trong subRoom
       renderHotspots(subRoom.items);
 
-      // Cập nhật Bottom Dock hiển thị các đồ vật phòng tắm
+      // Cập nhật Bottom Dock hiển thị các đồ vật subRoom
       renderSubRoomDock(subRoom);
 
     } else {
@@ -489,11 +507,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawerActionBtn = document.getElementById('drawer-action-btn');
     if (drawerActionBtn) {
       if (item.isPortal) {
-        drawerActionBtn.innerHTML = '<span>🚪 Mở Cửa Bước Vào Phòng Tắm →</span>';
+        const portalText = item.targetRoom === 'balcony'
+          ? '<span>🌊 Mở Cửa Trượt Ra Ban Công →</span>'
+          : '<span>🛁 Mở Cửa Bước Vào Phòng Tắm →</span>';
+        drawerActionBtn.innerHTML = portalText;
         drawerActionBtn.onclick = () => {
           if (roomViewer) roomViewer.enterSubRoom(item.targetRoom || 'bathroom');
         };
-      } else if (item.isBackPortal || item.id === 'back_to_bedroom') {
+      } else if (item.isBackPortal || item.id === 'back_to_bedroom' || item.id === 'back_to_bedroom_from_balcony') {
         drawerActionBtn.innerHTML = '<span>🚪 Quay Lại Phòng Ngủ</span>';
         drawerActionBtn.onclick = () => {
           if (roomViewer) roomViewer.exitSubRoom();
