@@ -16,9 +16,10 @@ class Room3DViewer {
     this.container = document.getElementById(containerId);
     this.options = options;
     this.currentRoomId = '301';
-    this.roomData = ROOMS_DATA['301'];
+    const initData = (typeof HotelRooms !== 'undefined' && HotelRooms.get('301')) || (typeof ROOMS_DATA !== 'undefined' && ROOMS_DATA['301']) || (typeof window !== 'undefined' && window.ROOMS_DATA && window.ROOMS_DATA['301']);
+    this.roomData = initData;
     this.currentSubRoom = null;
-    this.activeItems = this.roomData.items;
+    this.activeItems = this.roomData ? this.roomData.items : [];
     
     // Trạng thái: 'corridor' -> 'opening' -> 'door_opened' -> 'inside'
     this.state = 'corridor';
@@ -397,9 +398,10 @@ class Room3DViewer {
 
   loadRoom(roomId) {
     this.currentRoomId = roomId;
-    this.roomData = ROOMS_DATA[roomId] || ROOMS_DATA['301'];
+    const roomSource = (typeof HotelRooms !== 'undefined' && HotelRooms.get(roomId)) || (typeof ROOMS_DATA !== 'undefined' && ROOMS_DATA[roomId]) || (typeof window !== 'undefined' && window.ROOMS_DATA && window.ROOMS_DATA[roomId]);
+    this.roomData = roomSource || (typeof HotelRooms !== 'undefined' && HotelRooms.get('301')) || (typeof ROOMS_DATA !== 'undefined' && ROOMS_DATA['301']);
     this.currentSubRoom = null;
-    this.activeItems = this.roomData.items;
+    this.activeItems = this.roomData ? this.roomData.items : [];
     this.isDoorOpen = false;
     this.state = 'corridor';
     this.isNight = !!this.roomData.theme?.isNightDefault;

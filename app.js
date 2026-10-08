@@ -141,40 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
           compassNeedle.style.transform = `rotate(${angleDeg}deg)`;
         }
         if (compassLabel) {
-          let normalized = (angleDeg % 360 + 360) % 360;
-          let dirText = 'Toàn Cảnh 360°';
-
-          if (roomViewer && roomViewer.currentSubRoom === 'bathroom') {
-            if (normalized >= 320 || normalized < 35) dirText = 'Hướng Cửa Về Phòng Ngủ';
-            else if (normalized >= 35 && normalized < 85) dirText = 'Hướng Giá Treo Khăn Khách Sạn';
-            else if (normalized >= 85 && normalized < 140) dirText = 'Hướng Cabin Tắm Kính & Sen Cây';
-            else if (normalized >= 140 && normalized < 210) dirText = 'Hướng Bàn Lavabo & Tiện Nghi';
-            else if (normalized >= 210 && normalized < 320) dirText = 'Hướng Bồn Tắm Nằm Thư Giãn';
-          } else if (roomViewer && roomViewer.currentSubRoom === 'balcony') {
-            if (normalized >= 315 || normalized < 45) dirText = 'Hướng Vịnh Biển Vô Cực';
-            else if (normalized >= 45 && normalized < 115) dirText = 'Hướng Đại Lộ & Phố Phía Dưới';
-            else if (normalized >= 115 && normalized < 210) dirText = 'Hướng Cửa Vào Lại Phòng';
-            else if (normalized >= 210 && normalized < 280) dirText = 'Hướng Bàn Ghế Ban Công';
-            else if (normalized >= 280 && normalized < 315) dirText = 'Hướng Lan Can Kính Ban Công';
-          } else if (activeRoomId === '301') {
-            if (normalized >= 345 || normalized < 35) dirText = 'Hướng Giường Ngủ King-Size';
-            else if (normalized >= 35 && normalized < 65) dirText = 'Hướng Tab Đầu Giường';
-            else if (normalized >= 65 && normalized < 105) dirText = 'Hướng Cửa Phòng Tắm';
-            else if (normalized >= 105 && normalized < 160) dirText = 'Hướng Cửa Chính Ra Vào';
-            else if (normalized >= 160 && normalized < 195) dirText = 'Hướng Bàn Làm Việc';
-            else if (normalized >= 195 && normalized < 215) dirText = 'Hướng Smart TV 65"';
-            else if (normalized >= 215 && normalized < 245) dirText = 'Hướng Quầy Mini Bar';
-            else if (normalized >= 245 && normalized < 285) dirText = 'Hướng Ghế Bành Thư Giãn';
-            else if (normalized >= 285 && normalized < 345) dirText = 'Hướng Cửa Kính Ban Công View Biển';
-          } else {
-            if (normalized >= 340 || normalized < 35) dirText = 'Hướng Sofa Lounge & Bàn Trà';
-            else if (normalized >= 35 && normalized < 100) dirText = 'Hướng Đèn Chùm Hoàng Gia';
-            else if (normalized >= 100 && normalized < 170) dirText = 'Hướng Lối Vào Suite';
-            else if (normalized >= 170 && normalized < 225) dirText = 'Hướng Ghế Bành Vintage';
-            else if (normalized >= 225 && normalized < 275) dirText = 'Hướng Tủ Credenza & Hoa';
-            else if (normalized >= 275 && normalized < 340) dirText = 'Hướng Cửa Sổ Vòm Cổ Điển';
-          }
-          compassLabel.textContent = dirText;
+          compassLabel.textContent = (typeof HotelUtils !== 'undefined')
+            ? HotelUtils.getCompassHeading(angleDeg, activeRoomId, roomViewer?.currentSubRoom)
+            : 'Toàn Cảnh 360°';
         }
       },
 
@@ -755,11 +724,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // ================= 6. FORM ĐẶT PHÒNG KHÁCH SẠN =================
 
   function openBookingModal(roomId = '301') {
-    const data = ROOMS_DATA[roomId] || ROOMS_DATA['301'];
+    const data = (typeof HotelRooms !== 'undefined' && HotelRooms.get(roomId)) || (typeof ROOMS_DATA !== 'undefined' && ROOMS_DATA[roomId]) || ROOMS_DATA['301'];
     if (bookFormRoomName) bookFormRoomName.textContent = data.name;
     
     // Tạm tính 3 đêm
-    const totalCalc = (data.price * 3).toLocaleString('vi-VN') + '₫';
+    const totalCalc = (typeof HotelUtils !== 'undefined') ? HotelUtils.formatPrice(data.price * 3) : ((data.price * 3).toLocaleString('vi-VN') + '₫');
     if (bookTotalPrice) bookTotalPrice.textContent = totalCalc;
 
     if (bookingFormState) bookingFormState.style.display = 'block';
@@ -802,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const custName = document.getElementById('cust-name')?.value || 'Quý khách';
       const checkin = document.getElementById('book-checkin')?.value || '15/10/2026';
       const checkout = document.getElementById('book-checkout')?.value || '18/10/2026';
-      const room = ROOMS_DATA[activeRoomId] || ROOMS_DATA['301'];
+      const room = (typeof HotelRooms !== 'undefined' && HotelRooms.get(activeRoomId)) || (typeof ROOMS_DATA !== 'undefined' && ROOMS_DATA[activeRoomId]) || ROOMS_DATA['301'];
 
       // Hiển thị biên lai thành công
       const succCust = document.getElementById('succ-cust-name');
@@ -814,10 +783,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (succCust) succCust.textContent = custName;
       if (succRoom) succRoom.textContent = room.name;
       if (succDates) succDates.textContent = `${checkin} → ${checkout} (3 đêm)`;
-      if (succTotal) succTotal.textContent = (room.price * 3).toLocaleString('vi-VN') + '₫';
+      if (succTotal) succTotal.textContent = (typeof HotelUtils !== 'undefined') ? HotelUtils.formatPrice(room.price * 3) : ((room.price * 3).toLocaleString('vi-VN') + '₫');
       
-      const randomCode = `LUM-${room.roomNumber}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const randomCode = (typeof HotelUtils !== 'undefined') ? HotelUtils.generateBookingCode(room.roomNumber) : `LUM-${room.roomNumber}-${Math.floor(1000 + Math.random() * 9000)}`;
       if (succCode) succCode.textContent = randomCode;
+
+      if (typeof SoundManager !== 'undefined') {
+        SoundManager.playSuccess();
+      }
 
       if (bookingFormState) bookingFormState.style.display = 'none';
       if (bookingSuccessState) bookingSuccessState.style.display = 'block';
