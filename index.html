@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumière Grand Hotel & Residences | Trải Nghiệm Khám Phá Phòng Khách Sạn 3D</title>
+  <meta name="description" content="Trải nghiệm tham quan và thuê phòng khách sạn 5 sao với mô hình 3D tương tác Three.js. Mở cửa phòng thực tế ảo, bước vào trong, phóng to xem từng chi tiết đồ vật.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ================= HEADER / NAVBAR ================= -->
+  <header class="navbar" id="navbar">
+    <a href="#" class="nav-brand">
+      <div class="brand-icon">👑</div>
+      <div>
+        <div class="brand-title">LUMIÈRE</div>
+        <div class="brand-subtitle">Grand Resort & Residences</div>
+      </div>
+    </a>
+
+    <ul class="nav-menu">
+      <li><a href="#rooms" class="nav-link active">Bộ Sưu Tập Phòng</a></li>
+      <li><a href="#guide-3d" class="nav-link">Tính Năng 3D</a></li>
+      <li><a href="#amenities" class="nav-link">Dịch Vụ & Tiện Ích</a></li>
+      <li><a href="#reviews" class="nav-link">Đánh Giá</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="nav-phone">
+        <span>📞</span> Hotline: <span>1900 8888</span>
+      </div>
+      <button class="btn-primary" id="nav-book-btn">
+        <span>Đặt Phòng Ngay</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION ================= -->
+  <main>
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>Công Nghệ Đặt Phòng 3D Độc Bản</span>
+        </div>
+
+        <h1 class="hero-title">
+          ĐỈNH CAO NGHỈ DƯỠNG <br>
+          <span class="text-gradient-gold">TRẢI NGHIỆM PHÒNG 3D</span>
+        </h1>
+
+        <p class="hero-desc">
+          Lần đầu tiên tại Việt Nam, bạn có thể đứng trước cửa phòng, mở cửa và bước vào bên trong không gian khách sạn 5 sao thực tế ảo với <strong>Three.js</strong>. Tự do xoay 360°, phóng to cận cảnh từng chiếc giường King, Smart TV, quầy minibar hay vách kính hoàng hôn trước khi quyết định đặt phòng.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#rooms" class="btn-primary">
+            <span>✨ Khám Phá Các Hạng Phòng</span>
+          </a>
+          <button class="btn-outline btn-tour-3d" id="hero-quick-3d-btn" data-room="301">
+            <span>🚪 Trải Nghiệm Mở Cửa 3D (P.301)</span>
+          </button>
+        </div>
+
+        <!-- Fast Search / Booking Bar -->
+        <div class="search-card">
+          <div class="search-field">
+            <label>Ngày Nhận Phòng</label>
+            <input type="date" id="search-checkin" value="2026-10-15">
+          </div>
+          <div class="search-field">
+            <label>Ngày Trả Phòng</label>
+            <input type="date" id="search-checkout" value="2026-10-18">
+          </div>
+          <div class="search-field">
+            <label>Số Lượng Khách</label>
+            <select id="search-guests">
+              <option value="2">2 Người lớn, 1 Giường King</option>
+              <option value="1">1 Người lớn</option>
+              <option value="4">Gia đình (4 Khách)</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label>Hạng Phòng Ưu Tiên</label>
+            <select id="search-room-type">
+              <option value="all">Tất cả các phòng 3D</option>
+              <option value="301">Phòng 301 - Deluxe Ocean</option>
+              <option value="502">Phòng 502 - Royal Sky Suite</option>
+            </select>
+          </div>
+          <button class="btn-primary" id="search-submit-btn">
+            <span>Tìm Phòng</span>
+          </button>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">5.0 ★</span>
+            <span class="stat-label">Tiêu chuẩn quốc tế 5 sao</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">360°</span>
+            <span class="stat-label">Khảo sát phòng thực tế ảo</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Minh bạch chất lượng nội thất</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ROOMS LIST SECTION ================= -->
+    <section class="section-container" id="rooms">
+      <div class="section-header">
+        <div class="section-tag">BỘ SƯU TẬP SUITE CAO CẤP</div>
+        <h2 class="section-title">Chọn Phòng & Khám Phá Không Gian 3D</h2>
+        <p class="section-desc">
+          Mỗi căn phòng tại Lumière được thiết kế tinh tế với vật liệu nhập khẩu cao cấp. Hãy nhấp vào <strong>"🚪 Khám Phá 3D"</strong> để mở cửa và trải nghiệm không gian thực tế ngay trên trình duyệt của bạn.
+        </p>
+      </div>
+
+      <div class="rooms-grid">
+        <!-- ROOM 1: PHÒNG 301 -->
+        <article class="room-card" id="card-room-301">
+          <div class="room-card-preview" style="background-image: linear-gradient(180deg, rgba(8,11,17,0.25) 0%, rgba(8,11,17,0.95) 100%), url('https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80');">
+            <span class="room-badge-pill">★ Hạng Phòng Bán Chạy Nhất</span>
+            <span class="room-3d-tag">MÔ HÌNH 3D THREE.JS</span>
+            
+            <div class="room-number-display">
+              <span class="num">P.301</span>
+              <span class="type">Deluxe Grand Ocean Suite</span>
+            </div>
+          </div>
+
+          <div class="room-card-body">
+            <h3 class="room-title">Deluxe Grand Ocean Suite</h3>
+            <p class="room-tagline">Tầm nhìn hoàng hôn vịnh biển vô cực & Nội thất gỗ óc chó ấm cúng</p>
+
+            <div class="room-specs-row">
+              <div class="spec-chip">📐 Diện tích: <span>48 m²</span></div>
+              <div class="spec-chip">👥 Sức chứa: <span>2 Người lớn</span></div>
+              <div class="spec-chip">🛏️ Giường: <span>King-Size 2m x 2m2</span></div>
+              <div class="spec-chip">🌊 Tầm nhìn: <span>Trực diện biển</span></div>
+            </div>
+
+            <div class="amenities-preview">
+              <span class="amenity-badge">🛏️ Nệm cao su Dunlopillo</span>
+              <span class="amenity-badge">📺 Smart TV 65" 4K</span>
+              <span class="amenity-badge">🛋️ Ghế bành da Ý</span>
+              <span class="amenity-badge">🍸 Mini Bar & Nespresso</span>
+              <span class="amenity-badge">🪟 Ban công Panorama</span>
+            </div>
+
+            <div class="room-card-footer">
+              <div class="room-price-box">
+                <span class="price-sub">Giá chỉ từ</span>
+                <div>
+                  <span class="price-val">2.850.000₫</span>
+                  <span class="price-unit">/ đêm</span>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem;">
+                <button class="btn-outline btn-book-room-trigger" data-room="301">
+                  <span>Đặt Phòng</span>
+                </button>
+                <button class="btn-primary btn-open-3d" data-room="301" id="btn-open-301">
+                  <span>🚪 Khám Phá 3D</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ROOM 2: PHÒNG 502 -->
+        <article class="room-card" id="card-room-502">
+          <div class="room-card-preview" style="background-image: linear-gradient(180deg, rgba(8,11,17,0.25) 0%, rgba(8,11,17,0.95) 100%), url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80');">
+            <span class="room-badge-pill" style="border-color: #38bdf8; color: #38bdf8;">👑 Suite Tổng Thống Tầng 50</span>
+            <span class="room-3d-tag" style="background: linear-gradient(135deg, #38bdf8, #818cf8);">MÔ HÌNH 3D THREE.JS</span>
+            
+            <div class="room-number-display">
+              <span class="num">P.502</span>
+              <span class="type">Royal Presidential Sky Suite</span>
+            </div>
+          </div>
+
+          <div class="room-card-body">
+            <h3 class="room-title">Royal Presidential Sky Suite</h3>
+            <p class="room-tagline">Đỉnh cao xa hoa tầng 50 với tầm nhìn vô cực ngắm trọn ánh đèn đô thị</p>
+
+            <div class="room-specs-row">
+              <div class="spec-chip">📐 Diện tích: <span>92 m²</span></div>
+              <div class="spec-chip">👥 Sức chứa: <span>3-4 Khách</span></div>
+              <div class="spec-chip">🛏️ Giường: <span>Super King 2m4</span></div>
+              <div class="spec-chip">🏙️ Tầm nhìn: <span>Skyline Đêm Tầng 50</span></div>
+            </div>
+
+            <div class="amenities-preview">
+              <span class="amenity-badge">👑 Nệm khí thông minh</span>
+              <span class="amenity-badge">💼 Bàn làm việc Hermen Miller</span>
+              <span class="amenity-badge">🍷 Tủ rượu vang EuroCave</span>
+              <span class="amenity-badge">📺 Bang & Olufsen 75"</span>
+              <span class="amenity-badge">🤵 Quản gia riêng 24/7</span>
+            </div>
+
+            <div class="room-card-footer">
+              <div class="room-price-box">
+                <span class="price-sub">Giá chỉ từ</span>
+                <div>
+                  <span class="price-val">5.900.000₫</span>
+                  <span class="price-unit">/ đêm</span>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem;">
+                <button class="btn-outline btn-book-room-trigger" data-room="502">
+                  <span>Đặt Phòng</span>
+                </button>
+                <button class="btn-primary btn-open-3d" data-room="502" id="btn-open-502">
+                  <span>🚪 Khám Phá 3D</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= 3D GUIDE SECTION ================= -->
+    <section class="section-container features-section" id="guide-3d">
+      <div class="section-header">
+        <div class="section-tag">CÔNG NGHỆ THỰC TẾ ẢO</div>
+        <h2 class="section-title">Cách Trải Nghiệm Mô Hình Phòng 3D</h2>
+        <p class="section-desc">Chỉ với vài thao tác trực quan bằng chuột hoặc màn hình cảm ứng, bạn có thể tự mình trải nghiệm toàn bộ không gian phòng trước khi đặt.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <h3 class="step-title">Mở Cửa Phòng Ở Sảnh Ngoài</h3>
+          <p class="step-desc">
+            Khi bắt đầu, bạn sẽ đứng ở hành lang bên ngoài cửa phòng với biển số mạ vàng (301 hoặc 502). Chỉ cần nhấp chuột vào cánh cửa, ổ khóa sẽ mở và cửa sẽ xoay mở vào trong phòng cùng hiệu ứng âm thanh chân thực.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <h3 class="step-title">Bước Vào Bên Trong Không Gian</h3>
+          <p class="step-desc">
+            Nhấp vào nút "Bước vào trong" hoặc nhấp vào lối vào phòng. Camera sẽ tự động chuyển động mượt mà lướt qua cửa vào trung tâm phòng, mở ra góc nhìn 360 độ toàn cảnh nội thất.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <h3 class="step-title">Zoom Cận Cảnh & Khám Phá Đồ Vật</h3>
+          <p class="step-desc">
+            Nhấp vào bất kỳ đồ vật nào trong phòng (Giường, TV, Bàn trà, Minibar, Cửa sổ, Đèn ngủ) hoặc các điểm Hotspot màu vàng. Camera sẽ zoom cận cảnh để bạn xem tên sản phẩm, chất liệu và thông số chi tiết.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= AMENITIES SECTION ================= -->
+    <section class="section-container" id="amenities">
+      <div class="section-header">
+        <div class="section-tag">DỊCH VỤ NGHỈ DƯỠNG HOÀNG GIA</div>
+        <h2 class="section-title">Tiện Ích 5 Sao Đi Kèm Cho Mỗi Phòng</h2>
+        <p class="section-desc">Mọi kỳ nghỉ tại Lumière đều được chăm chút tỉ mỉ từ những trải nghiệm nhỏ nhất.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
+        <div class="step-card" style="padding: 1.5rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">🍽️</div>
+          <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Buffet Sáng Thượng Hạng</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Thực đơn Á - Âu tinh tế được chế biến bởi các đầu bếp sao Michelin.</p>
+        </div>
+        <div class="step-card" style="padding: 1.5rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">🏊</div>
+          <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Hồ Bơi Vô Cực Chân Mây</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Bể bơi nước ấm trên tầng thượng ngắm hoàng hôn vịnh biển tuyệt đẹp.</p>
+        </div>
+        <div class="step-card" style="padding: 1.5rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">💆</div>
+          <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Lumière Spa & Wellness</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Liệu trình thư giãn thảo dược tự nhiên và xông hơi đá muối Himalaya.</p>
+        </div>
+        <div class="step-card" style="padding: 1.5rem;">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">🚗</div>
+          <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Đưa Đón Sân Bay Riêng</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Đội xe sang trọng đón tiếp chu đáo tận nơi 24/7 theo lịch bay.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div>
+        <div class="brand-title" style="margin-bottom: 0.5rem;">LUMIÈRE GRAND HOTEL</div>
+        <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 320px; margin-bottom: 1rem;">
+          Khu nghỉ dưỡng 5 sao quốc tế hàng đầu với công nghệ khảo sát và đặt phòng 3D thông minh.
+        </p>
+        <div style="color: var(--gold-light); font-size: 0.9rem;">
+          📍 Đại Lộ Biển Vàng, Bãi Dài, Phú Quốc / Đà Nẵng
+        </div>
+      </div>
+      <div>
+        <h4 style="color: #fff; margin-bottom: 1rem;">Hạng Phòng</h4>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+          <li><a href="#" style="color: inherit; text-decoration: none;">Phòng 301 - Deluxe Ocean</a></li>
+          <li><a href="#" style="color: inherit; text-decoration: none;">Phòng 502 - Royal Sky Suite</a></li>
+          <li><a href="#" style="color: inherit; text-decoration: none;">Villa Biển Hồ Bơi Riêng</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color: #fff; margin-bottom: 1rem;">Công Nghệ 3D</h4>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+          <li>Three.js WebGL Engine</li>
+          <li>Mô phỏng mở cửa phòng</li>
+          <li>Kiểm tra đồ đạc nội thất</li>
+          <li>Đổi chế độ Ngày & Đêm</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color: #fff; margin-bottom: 1rem;">Hỗ Trợ Đặt Phòng</h4>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Hotline 24/7: <strong style="color: var(--gold-light);">1900 8888</strong></p>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Email: booking@lumiere-hotel.vn</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Lumière Grand Hotel & Residences. Mô hình 3D tương tác phòng khách sạn phát triển bằng Three.js.
+    </div>
+  </footer>
+
+  <!-- =========================================================
+       3D FULLSCREEN ROOM EXPERIENCE MODAL
+       ========================================================= -->
+  <div class="room3d-modal" id="room3d-modal">
+    <!-- WebGL Canvas Container -->
+    <div id="three-canvas-container"></div>
+
+    <!-- 3D Hotspot Badges Container -->
+    <div id="hotspots-layer"></div>
+
+    <!-- Scene Transition Overlay (Chuyển cảnh bước vào phòng tắm / về phòng ngủ) -->
+    <div class="scene-transition-overlay" id="scene-transition-overlay">
+      <div class="pano-spinner" style="width: 28px; height: 28px; border-width: 3px; border-top-color: #38bdf8;"></div>
+      <div class="transition-text" id="scene-transition-text">
+        <span>🛁</span> Đang mở cửa bước vào phòng tắm...
+      </div>
+      <div class="transition-sub" id="scene-transition-sub">Phòng Tắm Master En-Suite Đá Cẩm Thạch 5 Sao</div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <div class="modal-top-bar">
+      <!-- Left: Room Info Pill -->
+      <div class="top-bar-left">
+        <div class="glass-pill">
+          <span class="room-status-dot" id="modal-status-dot"></span>
+          <div>
+            <div class="room-badge-3d" id="modal-room-title">Phòng 301 - Deluxe Ocean Suite</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);" id="modal-room-status-text">Đang ở ngoài sảnh</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Switch Between Room 301 & Room 502 -->
+      <div class="top-bar-center">
+        <div class="room-switcher-group">
+          <button class="switcher-btn active" id="switch-room-301" data-room="301">
+            <span>🚪 P.301 - Deluxe Suite</span>
+          </button>
+          <button class="switcher-btn" id="switch-room-502" data-room="502">
+            <span>👑 P.502 - Royal Sky Suite</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Controls & Exit -->
+      <div class="top-bar-right" style="display: flex; gap: 0.75rem;">
+        <!-- Auto Rotate 360 -->
+        <button class="tool-btn active" id="btn-toggle-autorotate" title="Tự động xoay 360°">
+          <span id="autorotate-icon">🔄</span>
+        </button>
+
+        <!-- Fullscreen Toggle -->
+        <button class="tool-btn" id="btn-toggle-fullscreen" title="Toàn màn hình">
+          <span>⛶</span>
+        </button>
+
+        <!-- Day / Night Toggle -->
+        <button class="tool-btn" id="btn-toggle-daynight" title="Đổi chế độ Ánh sáng Ngày / Đêm">
+          <span id="daynight-icon">☀️</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button class="tool-btn" id="btn-toggle-sound" title="Bật / Tắt Âm thanh hiệu ứng">
+          <span id="sound-icon">🔊</span>
+        </button>
+
+        <!-- Help Info -->
+        <button class="tool-btn" id="btn-show-help" title="Hướng dẫn sử dụng">
+          <span>❓</span>
+        </button>
+
+        <!-- Close 3D Modal -->
+        <button class="tool-btn btn-close" id="btn-close-3d" title="Đóng chế độ xem 3D">
+          <span>✕</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Guidance Banner -->
+    <div class="guidance-banner" id="guidance-banner">
+      <div class="guidance-text" id="guidance-text">
+        <span>👉</span> Nhấp chuột vào cánh cửa để mở phòng
+      </div>
+      <button class="guidance-btn" id="guidance-action-btn" style="display: none;">
+        <span>Bước Vào Trong →</span>
+      </button>
+    </div>
+
+    <!-- 360 Loading Badge -->
+    <div class="pano-loading-badge" id="pano-loading-badge" style="display: none;">
+      <div class="pano-spinner"></div>
+      <span id="pano-loading-text">Đang tải toàn cảnh 360° 4K...</span>
+      <div class="pano-bar-track"><div class="pano-bar-fill" id="pano-bar-fill"></div></div>
+    </div>
+
+    <!-- Floating Zoom Controls -->
+    <div class="modal-zoom-controls" id="zoom-controls" style="display: none;">
+      <button class="zoom-btn" id="btn-zoom-in" title="Phóng to">+</button>
+      <button class="zoom-btn" id="btn-zoom-reset" title="Góc nhìn chuẩn">🎯</button>
+      <button class="zoom-btn" id="btn-zoom-out" title="Thu nhỏ">−</button>
+    </div>
+
+    <!-- Mini Compass / Radar Widget -->
+    <div class="modal-compass-widget" id="compass-widget" style="display: none;">
+      <div class="compass-dial" id="compass-dial">
+        <span class="compass-mark mark-n">B</span>
+        <span class="compass-mark mark-e">Đ</span>
+        <span class="compass-mark mark-s">N</span>
+        <span class="compass-mark mark-w">T</span>
+        <div class="compass-needle" id="compass-needle"></div>
+      </div>
+      <div class="compass-label" id="compass-label">Góc nhìn 360°</div>
+    </div>
+
+    <!-- Bottom Quick Navigation Dock -->
+    <div class="modal-bottom-dock" id="bottom-dock" style="display: none;">
+      <button class="dock-btn active" data-action="overview">
+        <span>👁️ Toàn Cảnh</span>
+      </button>
+      <button class="dock-btn" data-action="door">
+        <span>🚪 Cửa Vào</span>
+      </button>
+      <button class="dock-btn" data-action="item" data-item="bed">
+        <span>🛏️ Giường Ngủ</span>
+      </button>
+      <button class="dock-btn" data-action="item" data-item="tv">
+        <span>📺 Smart TV</span>
+      </button>
+      <button class="dock-btn" data-action="item" data-item="armchair">
+        <span>🛋️ Ghế Thư Giãn</span>
+      </button>
+      <button class="dock-btn" data-action="item" data-item="minibar">
+        <span>🍸 Mini Bar</span>
+      </button>
+      <button class="dock-btn" data-action="item" data-item="window">
+        <span>🪟 Ban Công View</span>
+      </button>
+      <button class="dock-btn bath-dock-btn portal-btn" data-action="item" data-item="bath">
+        <span>🛁 Phòng Tắm ↗</span>
+      </button>
+      <button class="dock-btn desk-dock-btn" data-action="item" data-item="desk" style="display: none;">
+        <span>💼 Bàn Làm Việc</span>
+      </button>
+    </div>
+
+    <!-- Side Product Inspection Drawer -->
+    <aside class="inspection-drawer" id="inspection-drawer">
+      <div class="drawer-header">
+        <div>
+          <div class="drawer-cat-badge" id="drawer-item-cat">NỘI THẤT CAO CẤP</div>
+          <h3 class="drawer-title" id="drawer-item-name">Tên đồ vật</h3>
+        </div>
+        <button class="drawer-close" id="drawer-close-btn">✕</button>
+      </div>
+
+      <!-- Real High-Res Photo of the Item -->
+      <div class="drawer-photo-wrap" id="drawer-photo-wrap">
+        <img id="drawer-item-img" src="" alt="Ảnh thật chụp đồ vật" class="drawer-photo-img">
+        <span class="drawer-photo-tag">📸 ẢNH CHỤP THỰC TẾ 100%</span>
+        <button class="drawer-photo-zoom-btn" id="btn-zoom-photo" title="Phóng to ảnh chất lượng cao">🔍 Phóng to</button>
+      </div>
+
+      <p class="drawer-desc" id="drawer-item-desc">Mô tả chi tiết đồ vật...</p>
+
+      <div class="drawer-specs-title">THÔNG SỐ & TIÊU CHUẨN</div>
+      <div class="drawer-specs-list" id="drawer-item-specs">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <div class="drawer-actions">
+        <button class="btn-outline" style="flex: 1;" id="drawer-back-btn">
+          <span>Quay lại toàn cảnh</span>
+        </button>
+        <button class="btn-primary" style="flex: 1;" id="drawer-action-btn">
+          <span>Đặt phòng này</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Floating Booking CTA in 3D Modal -->
+    <div class="floating-book-cta" id="floating-book-cta">
+      <div class="glass-pill" style="padding: 0.5rem 1.2rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Giá phòng:</span>
+        <strong style="color: var(--gold-light); font-size: 1.1rem;" id="modal-price-tag">2.850.000₫</strong>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">/đêm</span>
+      </div>
+      <button class="btn-primary btn-book-current-room">
+        <span>⚡ Đặt Phòng Ngay</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       BOOKING FORM MODAL
+       ========================================================= -->
+  <div class="booking-modal-backdrop" id="booking-modal">
+    <div class="booking-card">
+      <!-- FORM STATE -->
+      <div id="booking-form-state">
+        <div class="booking-header">
+          <div>
+            <h3 class="booking-title">Đặt Phòng Khách Sạn</h3>
+            <div class="booking-room-pill" id="book-form-room-name">Phòng 301 - Deluxe Grand Ocean Suite</div>
+          </div>
+          <button class="drawer-close" id="book-modal-close">✕</button>
+        </div>
+
+        <form class="booking-form" id="hotel-booking-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Họ và Tên Khách Hàng *</label>
+              <input type="text" id="cust-name" placeholder="Nguyễn Văn A" required>
+            </div>
+            <div class="form-group">
+              <label>Số Điện Thoại *</label>
+              <input type="tel" id="cust-phone" placeholder="0912 345 678" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ngày Nhận Phòng (Check-in)</label>
+              <input type="date" id="book-checkin" value="2026-10-15" required>
+            </div>
+            <div class="form-group">
+              <label>Ngày Trả Phòng (Check-out)</label>
+              <input type="date" id="book-checkout" value="2026-10-18" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Yêu Cầu Đặc Biệt (Tùy chọn)</label>
+            <textarea id="cust-notes" rows="2" placeholder="Ví dụ: Chuẩn bị hoa tươi kỷ niệm, tầng cao, check-in sớm..."></textarea>
+          </div>
+
+          <div class="booking-summary-box">
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Tổng thanh toán tạm tính (3 đêm):</div>
+              <div class="summary-total" id="book-total-price">8.550.000₫</div>
+            </div>
+            <div style="text-align: right; font-size: 0.8rem; color: #10b981;">
+              ✓ Miễn phí hủy phòng trước 24h <br>
+              ✓ Bao gồm ăn sáng 5 sao
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; margin-top: 0.5rem;">
+            <span>Xác Nhận Giữ Phòng Ngay</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- SUCCESS RECEIPT STATE -->
+      <div id="booking-success-state" style="display: none;">
+        <div class="booking-success-box">
+          <div class="success-icon">✓</div>
+          <h3 class="booking-title" style="margin-bottom: 0.5rem;">Đặt Phòng Thành Công!</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Cảm ơn quý khách <strong id="succ-cust-name" style="color: #fff;">Nguyễn Văn A</strong>. Nhân viên lễ tân Lumière Grand Hotel sẽ liên hệ qua điện thoại để xác nhận trong ít phút.
+          </p>
+
+          <div class="booking-code" id="succ-booking-code">LUM-301-8924</div>
+
+          <div class="drawer-specs-list" style="margin: 1.5rem 0; text-align: left;">
+            <div class="drawer-spec-item">
+              <span class="spec-key">Hạng phòng:</span>
+              <span class="spec-val" id="succ-room-name">Phòng 301 - Deluxe Grand Ocean Suite</span>
+            </div>
+            <div class="drawer-spec-item">
+              <span class="spec-key">Thời gian lưu trú:</span>
+              <span class="spec-val" id="succ-dates">15/10/2026 - 18/10/2026 (3 đêm)</span>
+            </div>
+            <div class="drawer-spec-item">
+              <span class="spec-key">Tổng chi phí:</span>
+              <span class="spec-val" style="color: var(--gold-light);" id="succ-total">8.550.000₫</span>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="succ-close-btn" style="width: 100%;">
+            <span>Hoàn Tất & Tiếp Tục Trải Nghiệm</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= IMAGE LIGHTBOX (XEM ẢNH THẬT PHÓNG TO) ================= -->
+  <div class="image-lightbox" id="image-lightbox">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightbox-close-btn" title="Đóng">✕</button>
+      <img id="lightbox-img" src="" alt="Ảnh thật chất lượng cao">
+      <div class="lightbox-caption" id="lightbox-caption">Ảnh thực tế đồ vật 5 sao</div>
+    </div>
+  </div>
+
+  <!-- ================= LIBRARIES (CDN) ================= -->
+  <!-- Three.js r128 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- OrbitControls -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- GSAP 3 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- Application Scripts -->
+  <script src="textures.js"></script>
+  <script src="room-data.js"></script>
+  <script src="three-room.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
