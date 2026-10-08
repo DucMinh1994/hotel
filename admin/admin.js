@@ -16,6 +16,14 @@ const app = createApp({
     const selectedRoom = ref(null);
     const selectedScene = ref(null);
 
+    const selectedRoomId = computed({
+      get: () => selectedRoom.value?.id || '',
+      set: (id) => {
+        const found = rooms.value.find(r => r.id == id);
+        if (found) openStudioForRoom(found);
+      }
+    });
+
     // Modals
     const showRoomModal = ref(false);
     const showSceneModal = ref(false);
@@ -562,6 +570,7 @@ const app = createApp({
       loading,
       rooms,
       selectedRoom,
+      selectedRoomId,
       selectedScene,
       showRoomModal,
       showSceneModal,

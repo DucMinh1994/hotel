@@ -130,8 +130,8 @@
         <div class="studio-main">
           <div class="studio-toolbar">
             <div style="display: flex; align-items: center; gap: 1rem;">
-              <select class="form-select" style="width: 240px; font-weight: 700;" v-model="selectedRoom" @change="openStudioForRoom(selectedRoom)">
-                <option v-for="r in rooms" :key="r.id" :value="r">
+              <select class="form-select" style="width: 240px; font-weight: 700;" v-model="selectedRoomId">
+                <option v-for="r in rooms" :key="r.id" :value="r.id">
                   P.{{ r.room_number }} - {{ r.name }}
                 </option>
               </select>
