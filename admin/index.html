@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumière Hotel & Residences | Vue Admin 3D Virtual Tour Studio</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div id="app" v-cloak>
+    
+    <!-- Toast Notification -->
+    <div v-if="toast.show" :style="{
+      position: 'fixed',
+      top: '1.5rem',
+      right: '2rem',
+      zIndex: 9999,
+      background: toast.type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+      backdropFilter: 'blur(12px)',
+      color: '#fff',
+      padding: '0.85rem 1.5rem',
+      borderRadius: '12px',
+      fontWeight: '600',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.6rem',
+      fontSize: '0.9rem'
+    }">
+      <span>{{ toast.type === 'error' ? '⚠️' : '✓' }}</span>
+      <span>{{ toast.message }}</span>
+    </div>
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="admin-navbar">
+      <div class="brand-wrap">
+        <div class="brand-icon">👑</div>
+        <div>
+          <div class="brand-title">LUMIÈRE ADMIN</div>
+          <div class="brand-sub">3D Tour Studio & Laravel API</div>
+        </div>
+      </div>
+
+      <div class="nav-tabs-wrap">
+        <button class="nav-tab-btn" :class="{ active: currentTab === 'rooms' }" @click="currentTab = 'rooms'">
+          <span>🏨</span> Quản Lý Phòng Khách Sạn
+        </button>
+        <button class="nav-tab-btn" :class="{ active: currentTab === 'studio' }" @click="currentTab = 'studio'">
+          <span>🌐</span> 3D Virtual Tour Studio
+        </button>
+      </div>
+
+      <div class="header-status">
+        <div class="pulse-dot"></div>
+        <span>Laravel API: Online (Port 8000)</span>
+      </div>
+    </header>
+
+    <!-- ================= TAB 1: DANH SÁCH PHÒNG ================= -->
+    <main class="admin-container" v-show="currentTab === 'rooms'">
+      <div class="rooms-header">
+        <div>
+          <h1 class="page-title">
+            <span>🏨</span> Quản Lý Danh Sách Phòng
+          </h1>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+            Dữ liệu phòng được đồng bộ từ Cơ sở dữ liệu SQLite qua Laravel RESTful API
+          </p>
+        </div>
+        <button class="btn-gold" @click="openCreateRoom">
+          <span>➕</span> Thêm Phòng Mới
+        </button>
+      </div>
+
+      <div v-if="loading" style="text-align: center; padding: 4rem; color: var(--gold-light);">
+        Đang nạp dữ liệu từ Laravel API...
+      </div>
+
+      <div v-else class="rooms-grid">
+        <div class="room-card" v-for="room in rooms" :key="room.id">
+          <div class="room-card-img-wrap">
+            <img :src="room.room_image" :alt="room.name" class="room-card-img">
+            <div class="room-card-badge">P.{{ room.room_number }}</div>
+            <div class="room-card-price">{{ room.price_formatted || (room.price.toLocaleString('vi-VN') + '₫') }}</div>
+          </div>
+
+          <div class="room-card-body">
+            <h3 class="room-card-title">{{ room.name }}</h3>
+            <p class="room-card-tagline">{{ room.tagline || 'Căn suite tiện nghi 5 sao sang trọng' }}</p>
+
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">
+              Các không gian tour 3D:
+            </div>
+            <div class="scenes-pills">
+              <span class="scene-pill" v-for="sc in room.scenes" :key="sc.id">
+                <span>{{ sc.scene_key === 'bathroom' ? '🛁' : (sc.scene_key.includes('balcony') ? '🌊' : '🛏️') }}</span>
+                <span>{{ sc.short_name || sc.name }} ({{ sc.hotspots?.length || 0 }} điểm)</span>
+              </span>
+            </div>
+
+            <div class="room-card-footer">
+              <button class="btn-gold" style="padding: 0.5rem 0.9rem; font-size: 0.8rem;" @click="openStudioForRoom(room)">
+                <span>🌐</span> Soạn Tour 3D
+              </button>
+              <div style="display: flex; gap: 0.4rem;">
+                <button class="btn-secondary" style="padding: 0.5rem 0.8rem;" @click="openEditRoom(room)">
+                  <span>✏️</span>
+                </button>
+                <button class="btn-danger" @click="deleteRoom(room)">
+                  <span>🗑️</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= TAB 2: TRÌNH SOẠN THẢO 3D STUDIO ================= -->
+    <main class="admin-container" v-show="currentTab === 'studio'" style="padding-top: 1rem;">
+      <div class="studio-layout">
+        
+        <!-- Left: 3D Viewport & Toolbar -->
+        <div class="studio-main">
+          <div class="studio-toolbar">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <select class="form-select" style="width: 240px; font-weight: 700;" v-model="selectedRoom" @change="openStudioForRoom(selectedRoom)">
+                <option v-for="r in rooms" :key="r.id" :value="r">
+                  P.{{ r.room_number }} - {{ r.name }}
+                </option>
+              </select>
+
+              <div class="scene-selector-group" v-if="selectedRoom && selectedRoom.scenes">
+                <button class="scene-tab" 
+                        v-for="sc in selectedRoom.scenes" 
+                        :key="sc.id"
+                        :class="{ active: selectedScene && selectedScene.id === sc.id }"
+                        @click="switchScene(sc)">
+                  <span>{{ sc.scene_key === 'bathroom' ? '🛁' : (sc.scene_key.includes('balcony') ? '🌊' : '🛏️') }}</span>
+                  <span>{{ sc.short_name || sc.name }}</span>
+                </button>
+              </div>
+            </div>
+
+            <button class="btn-secondary" style="font-size: 0.8rem;" @click="openAddScene">
+              <span>➕</span> Thêm Không Gian Con
+            </button>
+          </div>
+
+          <!-- 3D Canvas Box -->
+          <div class="studio-viewport-wrap">
+            <div class="viewport-hint">
+              <span>💡</span>
+              <span>Kéo chuột để xoay 360° | <strong>Click trực tiếp vào vị trí đồ vật trên ảnh</strong> để lấy tọa độ</span>
+            </div>
+            <div class="viewport-crosshair"></div>
+            <div id="studio-canvas-container" style="width: 100%; height: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Right: Hotspot Inspector Sidebar -->
+        <aside class="studio-sidebar">
+          <div class="sidebar-title">
+            <span>{{ hotspotForm.id ? '✏️ Chỉnh Sửa Điểm Ghim' : '📍 Thêm Điểm Ghim Đồ Vật' }}</span>
+            <span v-if="hotspotForm.id" style="font-size: 0.75rem; color: var(--gold-light); font-weight: 600;">ID: #{{ hotspotForm.id }}</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tọa Độ 3D Đã Chấm (Tự động từ Click):</label>
+            <div class="coords-row">
+              <div class="coords-box">X: {{ hotspotForm.position_x }}</div>
+              <div class="coords-box">Y: {{ hotspotForm.position_y }}</div>
+              <div class="coords-box">Z: {{ hotspotForm.position_z }}</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tên Đồ Vật / Thiết Bị:</label>
+            <input type="text" class="form-input" v-model="hotspotForm.name" placeholder="Ví dụ: Giường Ngủ King, Smart TV...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tên Ngắn (Gắn trên Nhãn):</label>
+            <input type="text" class="form-input" v-model="hotspotForm.short_name" placeholder="Ví dụ: Giường King, TV...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Icon Đại Diện:</label>
+            <div class="icon-pills">
+              <span class="icon-pill" 
+                    v-for="ico in availableIcons" 
+                    :key="ico"
+                    :class="{ active: hotspotForm.icon === ico }"
+                    @click="hotspotForm.icon = ico">
+                {{ ico }}
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phân Loại Điểm Ghim:</label>
+            <select class="form-select" v-model="hotspotForm.type">
+              <option value="item">📍 Đồ vật / Tiện nghi (Xem ảnh thật & thông số)</option>
+              <option value="portal">🚪 Cửa chuyển không gian (Bước vào Phòng tắm / Ban công)</option>
+              <option value="back_portal">↩️ Cửa quay lại (Về lại phòng ngủ chính)</option>
+            </select>
+          </div>
+
+          <!-- Nếu là Portal: Cho phép chọn không gian đích -->
+          <div class="form-group" v-if="hotspotForm.type === 'portal'">
+            <label class="form-label">Chuyển Sang Không Gian Nào:</label>
+            <select class="form-select" v-model="hotspotForm.target_room_key">
+              <option value="">-- Chọn không gian đích --</option>
+              <option value="bathroom">🛁 Phòng Tắm Master En-suite</option>
+              <option value="balcony">🌊 Ban Công Panorama View Biển</option>
+              <option v-for="sc in selectedRoom?.scenes" :key="sc.id" :value="sc.scene_key">
+                {{ sc.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ảnh Chụp Thực Tế Đồ Vật:</label>
+            <input type="text" class="form-input" v-model="hotspotForm.image_url" placeholder="URL ảnh hoặc chọn file..." style="margin-bottom: 0.4rem;">
+            <input type="file" @change="e => handleFileUpload(e, 'hotspot_image')" style="font-size: 0.8rem; color: var(--text-muted);">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mô Tả Chi Tiết:</label>
+            <textarea class="form-textarea" rows="3" v-model="hotspotForm.description" placeholder="Mô tả tiêu chuẩn 5 sao của đồ vật..."></textarea>
+          </div>
+
+          <div style="margin-top: auto; display: flex; gap: 0.6rem; padding-top: 1rem; border-top: 1px solid var(--border-glass);">
+            <button class="btn-gold" style="flex: 1;" @click="saveHotspot">
+              <span>💾</span> {{ hotspotForm.id ? 'Cập Nhật' : 'Lưu Điểm Ghim' }}
+            </button>
+            <button v-if="hotspotForm.id" class="btn-danger" @click="deleteHotspot">
+              <span>🗑️</span> Xóa
+            </button>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+
+    <!-- ================= MODAL THÊM / SỬA PHÒNG ================= -->
+    <div class="modal-overlay" v-if="showRoomModal" @click.self="showRoomModal = false">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 style="font-family: var(--font-serif); font-size: 1.3rem;">
+            {{ isEditRoom ? '✏️ Chỉnh Sửa Phòng' : '➕ Thêm Phòng Khách Sạn Mới' }}
+          </h2>
+          <button style="background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;" @click="showRoomModal = false">✕</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 120px 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Số Phòng:</label>
+            <input type="text" class="form-input" v-model="roomForm.room_number" placeholder="301, 302...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tên Phòng:</label>
+            <input type="text" class="form-input" v-model="roomForm.name" placeholder="Deluxe Grand Ocean Suite...">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Giá Tiền (VND / đêm):</label>
+            <input type="number" class="form-input" v-model="roomForm.price">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Diện Tích:</label>
+            <input type="text" class="form-input" v-model="roomForm.area" placeholder="48 m²">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Loại Giường:</label>
+            <input type="text" class="form-input" v-model="roomForm.bed_type" placeholder="1 Giường King-Size">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tầm Nhìn (View):</label>
+            <input type="text" class="form-input" v-model="roomForm.view_type" placeholder="Hướng biển Panorama 180°">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tagline (Khẩu hiệu giới thiệu):</label>
+          <input type="text" class="form-input" v-model="roomForm.tagline">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ảnh Bìa Đại Diện:</label>
+          <input type="text" class="form-input" v-model="roomForm.room_image" style="margin-bottom: 0.4rem;">
+          <input type="file" @change="e => handleFileUpload(e, 'room_image')" style="font-size: 0.8rem; color: var(--text-muted);">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 1.5rem; border-top: 1px solid var(--border-glass); padding-top: 1rem;">
+          <button class="btn-secondary" @click="showRoomModal = false">Hủy</button>
+          <button class="btn-gold" @click="saveRoom">Lưu Thông Tin</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL THÊM KHÔNG GIAN CON (SCENE) ================= -->
+    <div class="modal-overlay" v-if="showSceneModal" @click.self="showSceneModal = false">
+      <div class="modal-content" style="width: 500px;">
+        <div class="modal-header">
+          <h2 style="font-family: var(--font-serif); font-size: 1.25rem;">
+            ➕ Thêm Không Gian Con Tour 3D
+          </h2>
+          <button style="background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer;" @click="showSceneModal = false">✕</button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mã Không Gian (Key):</label>
+          <input type="text" class="form-input" v-model="sceneForm.scene_key" placeholder="bathroom, balcony, sauna...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tên Không Gian:</label>
+          <input type="text" class="form-input" v-model="sceneForm.name" placeholder="Ban Công View Biển, Phòng Tắm Master...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ảnh Chụp 360° Panorama:</label>
+          <input type="text" class="form-input" v-model="sceneForm.panorama_360_url" placeholder="balcony_preview.jpg hoặc URL..." style="margin-bottom: 0.4rem;">
+          <input type="file" @change="e => handleFileUpload(e, 'scene_panorama')" style="font-size: 0.8rem; color: var(--text-muted);">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 1.5rem; border-top: 1px solid var(--border-glass); padding-top: 1rem;">
+          <button class="btn-secondary" @click="showSceneModal = false">Hủy</button>
+          <button class="btn-gold" @click="saveScene">Tạo Không Gian</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CDN LIBRARIES -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <script src="admin.js"></script>
+</body>
+</html>

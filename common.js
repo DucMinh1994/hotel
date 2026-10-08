@@ -41,8 +41,8 @@ const HotelRooms = {
   },
 
   /**
-   * Tải động (lazy load) file JavaScript của phòng khi người dùng bấm vào
-   * Giúp website tải ban đầu siêu nhẹ, chỉ tải phòng khi cần
+   * Tải dữ liệu phòng: Ưu tiên nạp động từ Laravel REST API (nếu đang chạy),
+   * tự động chuyển sang nạp tệp room-${id}.js tĩnh khi offline hoặc trên server Vercel.
    */
   loadRoom(id) {
     if (this.has(id)) {
@@ -51,37 +51,58 @@ const HotelRooms = {
     if (typeof document === 'undefined') {
       return Promise.reject(new Error('Document is undefined in non-browser environment'));
     }
-    return new Promise((resolve, reject) => {
-      const scriptId = `script-room-${id}`;
-      if (document.getElementById(scriptId)) {
-        let attempts = 0;
-        const interval = setInterval(() => {
-          attempts++;
-          if (this.has(id)) {
-            clearInterval(interval);
-            resolve(this.get(id));
-          } else if (attempts > 30) {
-            clearInterval(interval);
-            reject(new Error(`Timeout loading room ${id}`));
-          }
-        }, 50);
-        return;
-      }
 
-      const script = document.createElement('script');
-      script.id = scriptId;
-      script.src = `room-${id}.js`;
-      script.async = true;
-      script.onload = () => {
-        if (this.has(id)) {
-          resolve(this.get(id));
-        } else {
-          reject(new Error(`Tệp room-${id}.js đã nạp nhưng không tìm thấy đăng ký dữ liệu phòng.`));
+    const apiBase = (typeof window !== 'undefined' && window.HOTEL_API_BASE) || 'http://127.0.0.1:8000/api';
+    const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 1200) : null;
+
+    return fetch(`${apiBase}/rooms/${id}`, { signal: controller ? controller.signal : undefined })
+      .then(res => {
+        if (timeoutId) clearTimeout(timeoutId);
+        if (!res.ok) throw new Error(`API error ${res.status}`);
+        return res.json();
+      })
+      .then(roomData => {
+        if (roomData && roomData.id) {
+          console.log(`[HotelRooms] Đã nạp phòng ${id} trực tiếp từ Laravel REST API.`);
+          return this.register(id, roomData);
         }
-      };
-      script.onerror = () => reject(new Error(`Không thể nạp tệp room-${id}.js`));
-      document.head.appendChild(script);
-    });
+        throw new Error('Dữ liệu API không đúng định dạng');
+      })
+      .catch(() => {
+        if (timeoutId) clearTimeout(timeoutId);
+        return new Promise((resolve, reject) => {
+          const scriptId = `script-room-${id}`;
+          if (document.getElementById(scriptId)) {
+            let attempts = 0;
+            const interval = setInterval(() => {
+              attempts++;
+              if (this.has(id)) {
+                clearInterval(interval);
+                resolve(this.get(id));
+              } else if (attempts > 30) {
+                clearInterval(interval);
+                reject(new Error(`Timeout loading room ${id}`));
+              }
+            }, 50);
+            return;
+          }
+
+          const script = document.createElement('script');
+          script.id = scriptId;
+          script.src = `room-${id}.js`;
+          script.async = true;
+          script.onload = () => {
+            if (this.has(id)) {
+              resolve(this.get(id));
+            } else {
+              reject(new Error(`Tệp room-${id}.js đã nạp nhưng không tìm thấy đăng ký dữ liệu phòng.`));
+            }
+          };
+          script.onerror = () => reject(new Error(`Không thể nạp tệp room-${id}.js`));
+          document.head.appendChild(script);
+        });
+      });
   }
 };
 

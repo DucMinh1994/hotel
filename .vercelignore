@@ -1,3 +1,5 @@
 # Ignore local development server on Vercel so it deploys as a pure static site
 server.js
 dev-server.js
+backend/
+admin/

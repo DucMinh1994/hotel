@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 package-lock.json
+backend/vendor/
+backend/storage/*.key
+backend/database/*.sqlite
+backend/.env
+admin/node_modules/
+admin/dist/
 
 # Environment & local files
 .env
