@@ -25,4 +25,9 @@ class Room extends Model
     {
         return $this->hasOne(RoomScene::class)->where('is_main', true);
     }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class)->latest();
+    }
 }

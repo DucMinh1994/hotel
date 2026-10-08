@@ -22,9 +22,17 @@
         </router-link>
       </div>
 
-      <div class="header-status">
-        <div class="pulse-dot"></div>
-        <span>Laravel API: Online (Port 8000)</span>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <a href="http://127.0.0.1:8000/bookings" target="_blank" class="nav-tab-btn" style="border: 1px solid rgba(212,175,55,0.3); color: var(--gold-light);" title="Xem danh sách đặt phòng bên Backend">
+          <span>📋</span> Đặt Phòng (Backend)
+        </a>
+        <a href="http://127.0.0.1:8000/room-360" target="_blank" class="nav-tab-btn" style="border: 1px solid rgba(6,182,212,0.3); color: #38bdf8;" title="Xem chi tiết 360 độ bên Backend">
+          <span>👁️</span> Xem 360° (Backend)
+        </a>
+        <div class="header-status">
+          <div class="pulse-dot"></div>
+          <span>API Online</span>
+        </div>
       </div>
     </header>
 

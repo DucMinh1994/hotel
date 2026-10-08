@@ -38,3 +38,11 @@ Route::prefix('hotspots')->group(function () {
 
 // Upload ảnh 360 panorama & ảnh thực tế đồ vật
 Route::post('/upload', [UploadController::class, 'upload']);
+
+// Quản lý Đặt phòng (Bookings API)
+Route::prefix('bookings')->group(function () {
+    Route::get('/', [\App\Http\Controllers\BookingController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\BookingController::class, 'store']);
+    Route::put('/{id}/status', [\App\Http\Controllers\BookingController::class, 'updateStatus']);
+    Route::delete('/{id}', [\App\Http\Controllers\BookingController::class, 'destroy']);
+});
